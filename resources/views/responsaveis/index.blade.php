@@ -1,75 +1,82 @@
 @extends('layouts.app')
 
-@section('content')
-<div class="container-fluid">
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
-        <div>
-            <h1 class="h2">Responsáveis</h1>
-            <p class="text-muted">Gerencie o cadastro de responsáveis</p>
-        </div>
-        <a href="{{ route('responsaveis.create') }}" class="btn btn-primary">
-            <i class="bi bi-plus me-1"></i> Novo Responsável
-        </a>
-    </div>
+@section('title', 'Gestão de Responsáveis')
 
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title mb-0">Lista de Responsáveis</h5>
-            <p class="card-subtitle text-muted">Visualize e gerencie todos os responsáveis cadastrados</p>
+@section('content')
+<div class="py-12">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-semibold text-gray-800">Gestão de Responsáveis</h1>
+            <a href="{{ route('responsaveis.create') }}" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Novo Responsável
+            </a>
         </div>
-        <div class="card-body">
-            <div class="row mb-4">
-                <div class="col-md-8">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-search"></i></span>
-                        <input type="text" class="form-control" placeholder="Buscar responsável...">
+        
+        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="p-6 bg-white border-b border-gray-200">
+                <div class="flex justify-between mb-4">
+                    <div class="w-1/3">
+                        <form action="{{ route('responsaveis.index') }}" method="GET">
+                            <div class="flex">
+                                <input type="text" name="search" placeholder="Buscar por nome..." class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" value="{{ request('search') }}">
+                                <button type="submit" class="ml-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    Buscar
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-                <div class="col-md-4 d-flex justify-content-md-end mt-3 mt-md-0">
-                    <button class="btn btn-outline-secondary">Filtrar</button>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Telefone</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Crianças</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse($responsaveis ?? [] as $responsavel)
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">{{ $responsavel->nome }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">{{ $responsavel->telefone_principal }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">{{ $responsavel->email }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">{{ $responsavel->criancas_count ?? 0 }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <a href="{{ route('responsaveis.show', $responsavel->id) }}" class="text-blue-600 hover:text-blue-900 mr-3">Ver</a>
+                                    <a href="{{ route('responsaveis.edit', $responsavel->id) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">Editar</a>
+                                    <form action="{{ route('responsaveis.destroy', $responsavel->id) }}" method="POST" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Tem certeza que deseja excluir este responsável?')">Excluir</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                    Nenhum responsável encontrado.
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Telefone</th>
-                            <th>Email</th>
-                            <th>Crianças</th>
-                            <th class="text-end">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @php
-                        $responsaveis = [
-                            ['id' => 1, 'nome' => 'Maria Silva', 'telefone' => '(11) 98765-4321', 'email' => 'maria.silva@email.com', 'criancas' => 'Ana Silva'],
-                            ['id' => 2, 'nome' => 'Carlos Santos', 'telefone' => '(11) 91234-5678', 'email' => 'carlos.santos@email.com', 'criancas' => 'João Santos'],
-                            ['id' => 3, 'nome' => 'Juliana Oliveira', 'telefone' => '(11) 99876-5432', 'email' => 'juliana.oliveira@email.com', 'criancas' => 'Pedro Oliveira'],
-                            ['id' => 4, 'nome' => 'Roberto Costa', 'telefone' => '(11) 98765-1234', 'email' => 'roberto.costa@email.com', 'criancas' => 'Mariana Costa'],
-                            ['id' => 5, 'nome' => 'Fernanda Pereira', 'telefone' => '(11) 97654-3210', 'email' => 'fernanda.pereira@email.com', 'criancas' => 'Lucas Pereira'],
-                            ['id' => 6, 'nome' => 'Marcelo Souza', 'telefone' => '(11) 96543-2109', 'email' => 'marcelo.souza@email.com', 'criancas' => 'Beatriz Souza'],
-                            ['id' => 7, 'nome' => 'Patrícia Lima', 'telefone' => '(11) 95432-1098', 'email' => 'patricia.lima@email.com', 'criancas' => 'Gabriel Lima'],
-                            ['id' => 8, 'nome' => 'Eduardo Martins', 'telefone' => '(11) 94321-0987', 'email' => 'eduardo.martins@email.com', 'criancas' => 'Sofia Martins'],
-                        ];
-                        @endphp
-
-                        @foreach($responsaveis as $responsavel)
-                        <tr>
-                            <td>{{ $responsavel['nome'] }}</td>
-                            <td>{{ $responsavel['telefone'] }}</td>
-                            <td>{{ $responsavel['email'] }}</td>
-                            <td>{{ $responsavel['criancas'] }}</td>
-                            <td class="text-end">
-                                <a href="{{ route('responsaveis.show', $responsavel['id']) }}" class="btn btn-sm btn-outline-primary">
-                                    Ver detalhes
-                                </a>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                
+                <div class="mt-4">
+                    {{ $responsaveis->links() }}
+                </div>
             </div>
         </div>
     </div>

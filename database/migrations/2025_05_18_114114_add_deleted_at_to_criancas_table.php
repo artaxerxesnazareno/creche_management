@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('guardians', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('criancas', function (Blueprint $table) {
+            $table->softDeletes();
         });
     }
 
@@ -22,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('guardians');
+        Schema::table('criancas', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
     }
 };
