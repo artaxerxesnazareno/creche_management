@@ -15,17 +15,6 @@
             <h1 class="text-2xl font-semibold text-gray-800">Cadastrar Novo Responsável</h1>
         </div>
 
-        @if($errors->any())
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            <strong>Erro!</strong> Por favor, corrija os seguintes erros:
-            <ul class="mt-2 list-disc list-inside">
-                @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-        @endif
-
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 bg-white border-b border-gray-200">
                 <form action="{{ route('responsaveis.store') }}" method="POST" class="space-y-6">

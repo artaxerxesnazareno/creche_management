@@ -1,4 +1,4 @@
-<nav class="bg-white border-b border-gray-200">
+<nav class="bg-white border-b border-gray-200" x-data="{ open: false }">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
@@ -18,15 +18,15 @@
                     <a href="{{ route('responsaveis.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                         Responsáveis
                     </a>
-                    {{-- <a href="{{ route('matriculas.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"> --}}
+                    {{-- <a href="{{ route('matriculas.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                         Matrículas
-                    </a>
-                    {{-- <a href="{{ route('presenca.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"> --}}
+                    </a> --}}
+                    {{-- <a href="{{ route('presenca.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                         Controle de Presença
-                    </a>
-                    {{-- <a href="{{ route('relatorios.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"> --}}
+                    </a> --}}
+                    {{-- <a href="{{ route('relatorios.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                         Relatórios
-                    </a>
+                    </a> --}}
                 </div>
             </div>
 
@@ -48,7 +48,7 @@
                          aria-orientation="vertical"
                          aria-labelledby="user-menu-button"
                          tabindex="-1">
-{{--                        <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-0">Seu Perfil</a>--}}
+                        {{-- <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-0">Seu Perfil</a> --}}
                         <a href="{{ route('logout') }}"
                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -76,7 +76,7 @@
         </div>
     </div>
 
-    <div class="sm:hidden" id="mobile-menu" x-data="{ open: false }" x-show="open">
+    <div class="sm:hidden" id="mobile-menu" x-show="open">
         <div class="pt-2 pb-3 space-y-1">
             <a href="{{ route('dashboard') }}" class="bg-indigo-50 border-indigo-500 text-indigo-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
                 Dashboard
@@ -87,15 +87,15 @@
             <a href="{{ route('responsaveis.index') }}" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
                 Responsáveis
             </a>
-{{--            <a href="{{ route('matriculas.index') }}" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">--}}
+            {{-- <a href="{{ route('matriculas.index') }}" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
                 Matrículas
-            </a>
-{{--            <a href="{{ route('presenca.index') }}" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">--}}
+            </a> --}}
+            {{-- <a href="{{ route('presenca.index') }}" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
                 Controle de Presença
-            </a>
-{{--            <a href="{{ route('relatorios.index') }}" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">--}}
+            </a> --}}
+            {{-- <a href="{{ route('relatorios.index') }}" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
                 Relatórios
-            </a>
+            </a> --}}
         </div>
 
         <div class="pt-4 pb-3 border-t border-gray-200">
@@ -111,9 +111,9 @@
                 </div>
             </div>
             <div class="mt-3 space-y-1">
-{{--                <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">--}}
+                {{-- <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">
                     Seu Perfil
-                </a>
+                </a> --}}
                 <a href="{{ route('logout') }}"
                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
                    class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">

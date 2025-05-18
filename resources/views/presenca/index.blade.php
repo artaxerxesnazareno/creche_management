@@ -11,7 +11,7 @@
                 Registrar Presença
             </a>
         </div>
-        
+
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 bg-white border-b border-gray-200">
                 <div class="flex justify-between mb-4">
@@ -35,7 +35,7 @@
                         </select>
                     </div>
                 </div>
-                
+
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -103,7 +103,7 @@
                         </tbody>
                     </table>
                 </div>
-                
+
                 <div class="mt-4">
                     {{ $presencas->links() }}
                 </div>

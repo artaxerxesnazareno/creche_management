@@ -59,6 +59,11 @@ class CriancaController extends Controller
                 'nome' => 'required|string|max:255',
                 'data_nascimento' => 'required|date',
                 'genero' => 'required|string|in:Masculino,Feminino,Outro',
+            ], [
+                'nome.required' => 'O nome da criança é obrigatório',
+                'data_nascimento.required' => 'A data de nascimento é obrigatória',
+                'genero.required' => 'O gênero é obrigatório',
+                'genero.in' => 'O gênero deve ser Masculino, Feminino ou Outro'
             ]);
 
             // Campos opcionais
@@ -162,6 +167,17 @@ class CriancaController extends Controller
             'certidao' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'carteira_vacinacao' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'laudo_medico' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        ], [
+            'nome.required' => 'O nome da criança é obrigatório',
+            'data_nascimento.required' => 'A data de nascimento é obrigatória',
+            'genero.required' => 'O gênero é obrigatório',
+            'genero.in' => 'O gênero deve ser Masculino, Feminino ou Outro',
+            'responsavel_principal_id.required' => 'É necessário selecionar um responsável principal',
+            'foto.image' => 'O arquivo deve ser uma imagem (jpeg, png, jpg)',
+            'foto.max' => 'A foto não pode ter mais que 2MB',
+            'certidao.mimes' => 'A certidão deve ser um arquivo PDF ou imagem',
+            'carteira_vacinacao.mimes' => 'A carteira de vacinação deve ser um arquivo PDF ou imagem',
+            'laudo_medico.mimes' => 'O laudo médico deve ser um arquivo PDF ou imagem'
         ]);
 
         if ($request->hasFile('foto')) {

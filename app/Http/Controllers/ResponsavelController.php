@@ -44,6 +44,9 @@ class ResponsavelController extends Controller
             'bi' => 'nullable|string|max:14',
             'parentesco' => 'nullable|string|max:50',
             'obs' => 'nullable|string|max:500',
+        ], [
+            'nome.required' => 'O nome do responsável é obrigatório',
+            'celular.required' => 'O número de celular é obrigatório',
         ]);
 
         try {

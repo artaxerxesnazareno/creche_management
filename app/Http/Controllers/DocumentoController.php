@@ -30,8 +30,14 @@ class DocumentoController extends Controller
             $validated = $request->validate([
                 'titulo' => 'required|string|max:255',
                 'tipo' => 'required|string|max:100',
-                'arquivo' => 'required|file|mimes:pdf,jpg,jpeg,png,doc,docx,xls,xlsx|max:10240',
+                'arquivo' => 'required|file|max:10240', // 10MB max
                 'observacoes' => 'nullable|string',
+            ], [
+                'titulo.required' => 'O título do documento é obrigatório',
+                'tipo.required' => 'O tipo de documento é obrigatório',
+                'arquivo.required' => 'É necessário enviar um arquivo',
+                'arquivo.file' => 'O arquivo enviado é inválido',
+                'arquivo.max' => 'O arquivo não pode ter mais que 10MB'
             ]);
 
             // Upload do arquivo
@@ -65,22 +71,19 @@ class DocumentoController extends Controller
      */
     public function download(Documento $documento)
     {
-        try {
-            // Verifica se o arquivo existe
-            if (!Storage::disk('public')->exists($documento->arquivo)) {
-                return back()->with('error', 'Arquivo não encontrado.');
-            }
-
-            // Registra o download
-            Log::info('Download do documento: ' . $documento->id);
-
-            return Storage::disk('public')->download($documento->arquivo, $documento->titulo);
-
-        } catch (\Exception $e) {
-            Log::error('Erro ao fazer download do documento: ' . $e->getMessage());
-
-            return back()->with('error', 'Erro ao fazer download do documento: ' . $e->getMessage());
+        // Verificar se o arquivo existe
+        if (!Storage::disk('public')->exists($documento->arquivo)) {
+            return redirect()->back()->with('error', 'O arquivo não foi encontrado.');
         }
+
+        // Incrementar contador de downloads
+        $documento->update(['downloads' => $documento->downloads + 1]);
+
+        // Log de download
+        Log::info('Documento baixado: ID ' . $documento->id . ', Título: ' . $documento->titulo);
+
+        // Retornar arquivo para download
+        return Storage::disk('public')->download($documento->arquivo, $documento->titulo . '.' . pathinfo($documento->arquivo, PATHINFO_EXTENSION));
     }
 
     /**
