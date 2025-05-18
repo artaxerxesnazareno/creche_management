@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\CriancaController;
 use App\Http\Controllers\DocumentoController;
 use App\Models\Turma;
+use App\Http\Controllers\PresencaController;
+use App\Http\Controllers\ResponsavelController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +55,12 @@ Route::post('/criancas/{crianca}/documentos', [DocumentoController::class, 'stor
 Route::get('/documentos/{documento}/download', [DocumentoController::class, 'download'])->name('documentos.download');
 Route::delete('/documentos/{documento}', [DocumentoController::class, 'destroy'])->name('documentos.destroy');
 
+// Rotas de presenças
+Route::get('/criancas/{crianca}/presencas/entrada', [PresencaController::class, 'registrarEntrada'])->name('presenca.registrar-entrada');
+Route::post('/criancas/{crianca}/presencas/entrada', [PresencaController::class, 'salvarEntrada'])->name('presenca.salvar-entrada');
+Route::get('/criancas/{crianca}/presencas/saida', [PresencaController::class, 'registrarSaida'])->name('presenca.registrar-saida');
+Route::post('/criancas/{crianca}/presencas/saida', [PresencaController::class, 'salvarSaida'])->name('presenca.salvar-saida');
+Route::get('/criancas/{crianca}/presencas/historico', [PresencaController::class, 'historico'])->name('presenca.historico');
 
     // Rotas do Sistema de Creche
     Route::prefix('admin')->middleware(['auth'])->group(function () {
@@ -61,3 +69,15 @@ Route::delete('/documentos/{documento}', [DocumentoController::class, 'destroy']
 
     });
 });
+
+// Rotas de Responsáveis (modificadas para corrigir o erro de parâmetro)
+Route::get('/responsaveis', [ResponsavelController::class, 'index'])->name('responsaveis.index');
+Route::get('/responsaveis/create', [ResponsavelController::class, 'create'])->name('responsaveis.create');
+Route::post('/responsaveis', [ResponsavelController::class, 'store'])->name('responsaveis.store');
+Route::get('/responsaveis/{responsavel}', [ResponsavelController::class, 'show'])->name('responsaveis.show');
+Route::get('/responsaveis/{responsavel}/edit', [ResponsavelController::class, 'edit'])->name('responsaveis.edit');
+Route::put('/responsaveis/{responsavel}', [ResponsavelController::class, 'update'])->name('responsaveis.update');
+Route::delete('/responsaveis/{responsavel}', [ResponsavelController::class, 'destroy'])->name('responsaveis.destroy');
+
+Route::get('/criancas/{crianca}/responsaveis/atribuir', [ResponsavelController::class, 'atribuirForm'])->name('criancas.responsaveis.atribuir');
+Route::post('/criancas/{crianca}/responsaveis/atribuir', [ResponsavelController::class, 'atribuir'])->name('criancas.responsaveis.salvar');

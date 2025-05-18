@@ -114,6 +114,11 @@ class Crianca extends Model
         return $this->hasMany(Documento::class);
     }
 
+    public function presencas()
+    {
+        return $this->hasMany(Presenca::class)->orderBy('data', 'desc');
+    }
+
     /**
      * Calcula a idade da criança em anos
      *

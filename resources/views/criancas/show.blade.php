@@ -128,6 +128,12 @@
                             <div x-show="activeTab === 'responsaveis'" class="space-y-6">
                                 <div class="flex justify-between items-center">
                                     <h3 class="text-lg font-medium text-gray-900">Responsáveis</h3>
+                                    <a href="{{ route('criancas.responsaveis.atribuir', $crianca) }}" class="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition ease-in-out duration-150">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                        </svg>
+                                        Atribuir Responsáveis
+                                    </a>
                                 </div>
 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -139,11 +145,21 @@
                                             <p class="text-sm text-gray-700">Telefone: {{ $crianca->responsavelPrincipal->telefone ?? 'Não informado' }}</p>
                                             <p class="text-sm text-gray-700">Celular: {{ $crianca->responsavelPrincipal->celular ?? 'Não informado' }}</p>
                                             <p class="text-sm text-gray-700">Email: {{ $crianca->responsavelPrincipal->email ?? 'Não informado' }}</p>
+                                            <div class="mt-3">
+                                                <a href="{{ route('responsaveis.show', $crianca->responsavelPrincipal) }}" class="text-blue-600 hover:text-blue-900 text-sm">
+                                                    Ver detalhes
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                     @else
                                     <div class="bg-gray-50 p-4 rounded-lg">
                                         <p class="text-gray-500">Responsável principal não cadastrado.</p>
+                                        <div class="mt-2">
+                                            <a href="{{ route('criancas.responsaveis.atribuir', $crianca) }}" class="text-blue-600 hover:text-blue-900 text-sm">
+                                                Atribuir responsável principal
+                                            </a>
+                                        </div>
                                     </div>
                                     @endif
 
@@ -155,11 +171,21 @@
                                             <p class="text-sm text-gray-700">Telefone: {{ $crianca->responsavelSecundario->telefone ?? 'Não informado' }}</p>
                                             <p class="text-sm text-gray-700">Celular: {{ $crianca->responsavelSecundario->celular ?? 'Não informado' }}</p>
                                             <p class="text-sm text-gray-700">Email: {{ $crianca->responsavelSecundario->email ?? 'Não informado' }}</p>
+                                            <div class="mt-3">
+                                                <a href="{{ route('responsaveis.show', $crianca->responsavelSecundario) }}" class="text-blue-600 hover:text-blue-900 text-sm">
+                                                    Ver detalhes
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                     @else
                                     <div class="bg-gray-50 p-4 rounded-lg">
                                         <p class="text-gray-500">Responsável secundário não cadastrado.</p>
+                                        <div class="mt-2">
+                                            <a href="{{ route('criancas.responsaveis.atribuir', $crianca) }}" class="text-blue-600 hover:text-blue-900 text-sm">
+                                                Atribuir responsável secundário
+                                            </a>
+                                        </div>
                                     </div>
                                     @endif
                                 </div>
@@ -168,9 +194,26 @@
                             <div x-show="activeTab === 'presenca'">
                                 <div class="flex justify-between items-center mb-4">
                                     <h3 class="text-lg font-medium text-gray-900">Histórico de Presença</h3>
-                                    {{-- <a href="{{ route('presenca.registrar', $crianca->id) }}" class="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition ease-in-out duration-150"> --}}
-                                        Registrar Presença
-                                    </a>
+                                    <div class="flex space-x-2">
+                                        <a href="{{ route('presenca.registrar-entrada', $crianca) }}" class="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:border-green-700 focus:shadow-outline-green active:bg-green-700 transition ease-in-out duration-150">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                                            </svg>
+                                            Registrar Entrada
+                                        </a>
+                                        <a href="{{ route('presenca.registrar-saida', $crianca) }}" class="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition ease-in-out duration-150">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                            </svg>
+                                            Registrar Saída
+                                        </a>
+                                        <a href="{{ route('presenca.historico', $crianca) }}" class="inline-flex items-center px-3 py-1 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-50 transition ease-in-out duration-150">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                            </svg>
+                                            Ver Histórico Completo
+                                        </a>
+                                    </div>
                                 </div>
 
                                 <div class="overflow-x-auto">
@@ -185,13 +228,13 @@
                                             </tr>
                                         </thead>
                                         <tbody class="bg-white divide-y divide-gray-200">
-                                            @forelse($crianca->presencas ?? [] as $presenca)
+                                            @forelse($crianca->presencas->take(5) as $presenca)
                                             <tr>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $presenca->data_formatada }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $presenca->hora_entrada }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $presenca->hora_saida ?: '-' }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $presenca->responsavel_entrada->nome ?? '-' }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $presenca->responsavel_saida->nome ?? '-' }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $presenca->hora_entrada_formatada }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $presenca->hora_saida_formatada ?: '-' }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $presenca->responsavelEntrada->nome ?? '-' }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $presenca->responsavelSaida->nome ?? '-' }}</td>
                                             </tr>
                                             @empty
                                             <tr>
@@ -203,6 +246,14 @@
                                         </tbody>
                                     </table>
                                 </div>
+
+                                @if($crianca->presencas->count() > 5)
+                                <div class="mt-4 text-center">
+                                    <a href="{{ route('presenca.historico', $crianca) }}" class="text-blue-600 hover:text-blue-900">
+                                        Ver todos os registros de presença
+                                    </a>
+                                </div>
+                                @endif
                             </div>
 
                             <div x-show="activeTab === 'documentos'">
