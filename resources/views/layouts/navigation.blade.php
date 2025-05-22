@@ -1,43 +1,54 @@
-<nav class="bg-white border-b border-gray-200" x-data="{ open: false }">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<nav x-data="{ open: false }" class="bg-white border-b border-gray-200">
+    <!-- Primary Navigation Menu -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
-                <div class="flex-shrink-0 flex items-center">
+                <!-- Logo -->
+                <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" class="text-xl font-bold text-blue-600">
                         Sistema de Gestão de Creche
                     </a>
                 </div>
 
-                <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                    <a href="{{ route('dashboard') }}" class="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                        Dashboard
-                    </a>
-                     <a href="{{ route('criancas.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                        Crianças
-                    </a>
-                    <a href="{{ route('responsaveis.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                        Responsáveis
-                    </a>
-                    {{-- <a href="{{ route('matriculas.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                        Matrículas
-                    </a> --}}
-                    {{-- <a href="{{ route('presenca.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                        Controle de Presença
-                    </a> --}}
-                    {{-- <a href="{{ route('relatorios.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                        Relatórios
-                    </a> --}}
+                <!-- Navigation Links -->
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                        {{ __('Dashboard') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('criancas.index')" :active="request()->routeIs('criancas.*')">
+                        {{ __('Crianças') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('responsaveis.index')" :active="request()->routeIs('responsaveis.*')">
+                        {{ __('Responsáveis') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('turmas.index')" :active="request()->routeIs('turmas.*')">
+                        {{ __('Turmas') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('matriculas.index')" :active="request()->routeIs('matriculas.*')">
+                        {{ __('Matrículas') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('presencas.index')" :active="request()->routeIs('presencas.*')">
+                        {{ __('Presenças') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('relatorios.index')" :active="request()->routeIs('relatorios.*')">
+                        {{ __('Relatórios') }}
+                    </x-nav-link>
                 </div>
             </div>
 
-            <div class="hidden sm:ml-6 sm:flex sm:items-center">
+            <!-- Settings Dropdown -->
+            <div class="hidden sm:flex sm:items-center sm:ml-6">
                 <div class="ml-3 relative" x-data="{ open: false }">
                     <div>
-                        <button @click="open = !open" class="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
-                            <span class="sr-only">Abrir menu do usuário</span>
+                        <button @click="open = !open" class="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
                             <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-600">
                                 <span class="text-sm font-medium leading-none text-white">{{ substr(auth()->user()->name ?? 'U', 0, 1) }}</span>
                             </span>
+                            <div class="ml-1">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
                         </button>
                     </div>
 
@@ -48,7 +59,6 @@
                          aria-orientation="vertical"
                          aria-labelledby="user-menu-button"
                          tabindex="-1">
-                        {{-- <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-0">Seu Perfil</a> --}}
                         <a href="{{ route('logout') }}"
                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -65,60 +75,61 @@
                 </div>
             </div>
 
+            <!-- Hamburger -->
             <div class="-mr-2 flex items-center sm:hidden">
-                <button @click="open = !open" type="button" class="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" aria-controls="mobile-menu" aria-expanded="false">
+                <button @click="open = !open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
                     <span class="sr-only">Abrir menu principal</span>
-                    <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
         </div>
     </div>
 
-    <div class="sm:hidden" id="mobile-menu" x-show="open">
+    <!-- Responsive Navigation Menu -->
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <a href="{{ route('dashboard') }}" class="bg-indigo-50 border-indigo-500 text-indigo-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
-                Dashboard
-            </a>
-            <a href="{{ route('criancas.index') }}" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
-                Crianças
-            </a>
-            <a href="{{ route('responsaveis.index') }}" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
-                Responsáveis
-            </a>
-            {{-- <a href="{{ route('matriculas.index') }}" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
-                Matrículas
-            </a> --}}
-            {{-- <a href="{{ route('presenca.index') }}" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
-                Controle de Presença
-            </a> --}}
-            {{-- <a href="{{ route('relatorios.index') }}" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
-                Relatórios
-            </a> --}}
+            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('criancas.index')" :active="request()->routeIs('criancas.*')">
+                {{ __('Crianças') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('responsaveis.index')" :active="request()->routeIs('responsaveis.*')">
+                {{ __('Responsáveis') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('turmas.index')" :active="request()->routeIs('turmas.*')">
+                {{ __('Turmas') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('matriculas.index')" :active="request()->routeIs('matriculas.*')">
+                {{ __('Matrículas') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('presencas.index')" :active="request()->routeIs('presencas.*')">
+                {{ __('Presenças') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('relatorios.index')" :active="request()->routeIs('relatorios.*')">
+                {{ __('Relatórios') }}
+            </x-responsive-nav-link>
         </div>
 
-        <div class="pt-4 pb-3 border-t border-gray-200">
-            <div class="flex items-center px-4">
-                <div class="flex-shrink-0">
-                    <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-blue-600">
-                        <span class="text-sm font-medium leading-none text-white">{{ substr(auth()->user()->name ?? 'U', 0, 1) }}</span>
-                    </span>
-                </div>
-                <div class="ml-3">
-                    <div class="text-base font-medium text-gray-800">{{ auth()->user()->name ?? 'Usuário' }}</div>
-                    <div class="text-sm font-medium text-gray-500">{{ auth()->user()->email ?? 'email@exemplo.com' }}</div>
-                </div>
+        <!-- Responsive Settings Options -->
+        <div class="pt-4 pb-1 border-t border-gray-200">
+            <div class="px-4">
+                <div class="font-medium text-base text-gray-800">{{ auth()->user()->name ?? 'Usuário' }}</div>
+                <div class="font-medium text-sm text-gray-500">{{ auth()->user()->email ?? 'email@exemplo.com' }}</div>
             </div>
+
             <div class="mt-3 space-y-1">
-                {{-- <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">
-                    Seu Perfil
-                </a> --}}
-                <a href="{{ route('logout') }}"
-                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                   class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">
-                    Sair
-                </a>
+                <x-responsive-nav-link href="{{ route('logout') }}"
+                                   onclick="event.preventDefault(); document.getElementById('logout-form-responsive').submit();">
+                    {{ __('Sair') }}
+                </x-responsive-nav-link>
+
+                <form method="POST" action="{{ route('logout') }}" id="logout-form-responsive" class="hidden">
+                    @csrf
+                </form>
             </div>
         </div>
     </div>

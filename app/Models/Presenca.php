@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Presenca extends Model
 {
@@ -14,52 +15,71 @@ class Presenca extends Model
     protected $fillable = [
         'crianca_id',
         'data',
-        'hora_entrada',
-        'hora_saida',
-        'responsavel_entrada_id',
-        'responsavel_saida_id',
-        'observacoes'
+        'tipo',
+        'hora',
+        'observacao',
+        'responsavel',
     ];
 
     protected $casts = [
         'data' => 'date',
-        'hora_entrada' => 'datetime',
-        'hora_saida' => 'datetime',
     ];
 
-    protected $appends = [
-        'data_formatada'
-    ];
-
-    // Accessors
-    public function getDataFormatadaAttribute()
-    {
-        return $this->data ? $this->data->format('d/m/Y') : null;
-    }
-
-    public function getHoraEntradaFormatadaAttribute()
-    {
-        return $this->hora_entrada ? $this->hora_entrada->format('H:i') : null;
-    }
-
-    public function getHoraSaidaFormatadaAttribute()
-    {
-        return $this->hora_saida ? $this->hora_saida->format('H:i') : null;
-    }
-
-    // Relacionamentos
+    /**
+     * Relação com a criança
+     */
     public function crianca()
     {
         return $this->belongsTo(Crianca::class);
     }
 
-    public function responsavelEntrada()
+    /**
+     * Formata a data para exibição
+     */
+    public function getDataFormatadaAttribute()
     {
-        return $this->belongsTo(Responsavel::class, 'responsavel_entrada_id');
+        return $this->data->format('d/m/Y');
     }
 
-    public function responsavelSaida()
+    /**
+     * Formata a hora para exibição
+     */
+    public function getHoraFormatadaAttribute()
     {
-        return $this->belongsTo(Responsavel::class, 'responsavel_saida_id');
+        return $this->hora ? Carbon::createFromFormat('H:i:s', $this->hora)->format('H:i') : '';
+    }
+
+    /**
+     * Retorna o status da presença
+     */
+    public function getStatusAttribute()
+    {
+        switch ($this->tipo) {
+            case 'entrada':
+                return 'Presente';
+            case 'saida':
+                return 'Saída';
+            case 'falta':
+                return 'Ausente';
+            default:
+                return 'Desconhecido';
+        }
+    }
+
+    /**
+     * Retorna a classe CSS para o status
+     */
+    public function getStatusClassAttribute()
+    {
+        switch ($this->tipo) {
+            case 'entrada':
+                return 'bg-green-100 text-green-800';
+            case 'saida':
+                return 'bg-blue-100 text-blue-800';
+            case 'falta':
+                return 'bg-red-100 text-red-800';
+            default:
+                return 'bg-gray-100 text-gray-800';
+        }
     }
 }

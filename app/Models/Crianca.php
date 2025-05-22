@@ -116,7 +116,29 @@ class Crianca extends Model
 
     public function presencas()
     {
-        return $this->hasMany(Presenca::class)->orderBy('data', 'desc');
+        return $this->hasMany(Presenca::class);
+    }
+
+    /**
+     * Verifica se a criança está presente hoje
+     */
+    public function getPresenteHojeAttribute()
+    {
+        return $this->presencas()
+            ->whereDate('data', today())
+            ->where('tipo', 'entrada')
+            ->exists();
+    }
+
+    /**
+     * Verifica se a criança saiu hoje
+     */
+    public function getSaiuHojeAttribute()
+    {
+        return $this->presencas()
+            ->whereDate('data', today())
+            ->where('tipo', 'saida')
+            ->exists();
     }
 
     /**
