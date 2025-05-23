@@ -38,12 +38,12 @@ class PresencaController extends Controller
         // Estatísticas do dia
         $totalCriancas = $criancas->count();
         $presentes = $criancas->filter(function ($crianca) {
-            return $crianca->presencas->where('tipo', 'entrada')->count() > 0;
+            return $crianca->presencas->whereNotNull('hora_entrada')->count() > 0;
         })->count();
 
         $ausentes = $totalCriancas - $presentes;
 
-        return view('presencas.index', compact('criancas', 'turmas', 'data', 'turmaId', 'presentes', 'ausentes', 'totalCriancas'));
+        return view('presenca.index', compact('criancas', 'turmas', 'data', 'turmaId', 'presentes', 'ausentes', 'totalCriancas'));
     }
 
     /**
@@ -51,15 +51,18 @@ class PresencaController extends Controller
      */
     public function create()
     {
-        $turmas = Turma::with(['criancas' => function ($query) {
-            $query->whereHas('matriculas', function ($q) {
+        $criancas = Crianca::with(['responsavelPrincipal', 'turma'])
+            ->whereHas('matriculas', function ($q) {
                 $q->where('status', 'Ativa');
-            });
-        }])->get();
+            })
+            ->orderBy('nome')
+            ->get();
 
+        $responsaveis = Responsavel::orderBy('nome')->get();
+        $turmas = Turma::orderBy('nome')->get();
         $data = date('Y-m-d');
 
-        return view('presencas.create', compact('turmas', 'data'));
+        return view('presenca.registrar', compact('criancas', 'responsaveis', 'turmas', 'data'));
     }
 
     /**
@@ -69,9 +72,12 @@ class PresencaController extends Controller
     {
         $validated = $request->validate([
             'data' => 'required|date',
-            'presencas' => 'required|array',
-            'presencas.*' => 'required|in:presente,ausente',
-            'observacoes' => 'nullable|array',
+            'crianca_id' => 'required|exists:criancas,id',
+            'hora_entrada' => 'required|date_format:H:i',
+            'responsavel_entrada_id' => 'required|exists:responsaveis,id',
+            'hora_saida' => 'nullable|date_format:H:i',
+            'responsavel_saida_id' => 'nullable|exists:responsaveis,id|required_with:hora_saida',
+            'observacoes' => 'nullable|string',
         ]);
 
         try {
@@ -79,29 +85,32 @@ class PresencaController extends Controller
 
             $data = $validated['data'];
 
-            // Remover presenças existentes para esta data
-            Presenca::whereDate('data', $data)->delete();
+            // Verificar se já existe um registro para esta data e criança
+            $presenca = Presenca::firstOrNew([
+                'crianca_id' => $validated['crianca_id'],
+                'data' => $data,
+            ]);
 
-            // Registrar novas presenças
-            foreach ($validated['presencas'] as $criancaId => $status) {
-                Presenca::create([
-                    'crianca_id' => $criancaId,
-                    'data' => $data,
-                    'tipo' => $status === 'presente' ? 'entrada' : 'falta',
-                    'hora' => $status === 'presente' ? now()->format('H:i:s') : null,
-                    'observacao' => $validated['observacoes'][$criancaId] ?? null,
-                ]);
+            $presenca->hora_entrada = $validated['hora_entrada'];
+            $presenca->responsavel_entrada_id = $validated['responsavel_entrada_id'];
+
+            if (!empty($validated['hora_saida'])) {
+                $presenca->hora_saida = $validated['hora_saida'];
+                $presenca->responsavel_saida_id = $validated['responsavel_saida_id'];
             }
+
+            $presenca->observacoes = $validated['observacoes'] ?? null;
+            $presenca->save();
 
             DB::commit();
 
-            return redirect()->route('presencas.index', ['data' => $data])
-                ->with('success', 'Presenças registradas com sucesso!');
+            return redirect()->route('presenca.index', ['data' => $data])
+                ->with('success', 'Presença registrada com sucesso!');
         } catch (\Exception $e) {
             DB::rollBack();
 
             return back()->withInput()
-                ->with('error', 'Erro ao registrar presenças: ' . $e->getMessage());
+                ->with('error', 'Erro ao registrar presença: ' . $e->getMessage());
         }
     }
 
@@ -144,15 +153,17 @@ class PresencaController extends Controller
     {
         $presenca = Presenca::whereDate('data', today())
             ->where('crianca_id', $crianca->id)
-            ->where('tipo', 'entrada')
+            ->whereNotNull('hora_entrada')
             ->first();
 
         if ($presenca) {
-            return redirect()->route('criancas.show', $crianca)
+            return redirect()->route('presenca.index')
                 ->with('info', 'Entrada já registrada para hoje.');
         }
 
-        return view('presencas.registrar-entrada', compact('crianca'));
+        $responsaveis = Responsavel::orderBy('nome')->get();
+
+        return view('presenca.registrar-entrada', compact('crianca', 'responsaveis'));
     }
 
     /**
@@ -162,20 +173,22 @@ class PresencaController extends Controller
     {
         $validated = $request->validate([
             'observacao' => 'nullable|string',
-            'responsavel' => 'nullable|string',
+            'responsavel_entrada_id' => 'required|exists:responsaveis,id',
         ]);
 
         try {
-            Presenca::create([
+            // Verificar se já existe um registro para hoje
+            $presenca = Presenca::firstOrNew([
                 'crianca_id' => $crianca->id,
                 'data' => today(),
-                'tipo' => 'entrada',
-                'hora' => now()->format('H:i:s'),
-                'observacao' => $validated['observacao'] ?? null,
-                'responsavel' => $validated['responsavel'] ?? null,
             ]);
 
-            return redirect()->route('criancas.show', $crianca)
+            $presenca->hora_entrada = now()->format('H:i:s');
+            $presenca->responsavel_entrada_id = $validated['responsavel_entrada_id'];
+            $presenca->observacoes = $validated['observacao'] ?? null;
+            $presenca->save();
+
+            return redirect()->route('presenca.index')
                 ->with('success', 'Entrada registrada com sucesso!');
         } catch (\Exception $e) {
             return back()->withInput()
@@ -190,25 +203,22 @@ class PresencaController extends Controller
     {
         $entrada = Presenca::whereDate('data', today())
             ->where('crianca_id', $crianca->id)
-            ->where('tipo', 'entrada')
+            ->whereNotNull('hora_entrada')
             ->first();
 
         if (!$entrada) {
-            return redirect()->route('criancas.show', $crianca)
+            return redirect()->route('presenca.index')
                 ->with('error', 'Não há registro de entrada para hoje.');
         }
 
-        $saida = Presenca::whereDate('data', today())
-            ->where('crianca_id', $crianca->id)
-            ->where('tipo', 'saida')
-            ->first();
-
-        if ($saida) {
-            return redirect()->route('criancas.show', $crianca)
+        if ($entrada->hora_saida) {
+            return redirect()->route('presenca.index')
                 ->with('info', 'Saída já registrada para hoje.');
         }
 
-        return view('presencas.registrar-saida', compact('crianca', 'entrada'));
+        $responsaveis = Responsavel::orderBy('nome')->get();
+
+        return view('presenca.registrar-saida', compact('crianca', 'entrada', 'responsaveis'));
     }
 
     /**
@@ -218,20 +228,33 @@ class PresencaController extends Controller
     {
         $validated = $request->validate([
             'observacao' => 'nullable|string',
-            'responsavel' => 'nullable|string',
+            'responsavel_saida_id' => 'required|exists:responsaveis,id',
         ]);
 
         try {
-            Presenca::create([
-                'crianca_id' => $crianca->id,
-                'data' => today(),
-                'tipo' => 'saida',
-                'hora' => now()->format('H:i:s'),
-                'observacao' => $validated['observacao'] ?? null,
-                'responsavel' => $validated['responsavel'] ?? null,
-            ]);
+            // Buscar o registro de entrada de hoje
+            $presenca = Presenca::whereDate('data', today())
+                ->where('crianca_id', $crianca->id)
+                ->whereNotNull('hora_entrada')
+                ->first();
 
-            return redirect()->route('criancas.show', $crianca)
+            if (!$presenca) {
+                return back()->with('error', 'Não há registro de entrada para hoje.');
+            }
+
+            // Atualizar com os dados de saída
+            $presenca->hora_saida = now()->format('H:i:s');
+            $presenca->responsavel_saida_id = $validated['responsavel_saida_id'];
+
+            // Se houver uma nova observação, anexá-la às observações existentes
+            if (!empty($validated['observacao'])) {
+                $observacoes = $presenca->observacoes ? $presenca->observacoes . "\n\nSaída: " : "Saída: ";
+                $presenca->observacoes = $observacoes . $validated['observacao'];
+            }
+
+            $presenca->save();
+
+            return redirect()->route('presenca.index')
                 ->with('success', 'Saída registrada com sucesso!');
         } catch (\Exception $e) {
             return back()->withInput()
@@ -253,7 +276,6 @@ class PresencaController extends Controller
         $presencas = Presenca::where('crianca_id', $crianca->id)
             ->whereBetween('data', [$dataInicio, $dataFim])
             ->orderBy('data')
-            ->orderBy('hora')
             ->get()
             ->groupBy(function ($item) {
                 return $item->data->format('Y-m-d');
@@ -261,12 +283,13 @@ class PresencaController extends Controller
 
         $diasUteis = $this->calcularDiasUteis($dataInicio, $dataFim);
         $diasPresente = $presencas->filter(function ($grupo) {
-            return $grupo->where('tipo', 'entrada')->count() > 0;
+            // Considera presente se tiver hora_entrada registrada
+            return $grupo->first() && $grupo->first()->hora_entrada;
         })->count();
 
         $percentualPresenca = $diasUteis > 0 ? round(($diasPresente / $diasUteis) * 100, 1) : 0;
 
-        return view('presencas.historico', compact('crianca', 'presencas', 'mes', 'ano', 'diasUteis', 'diasPresente', 'percentualPresenca'));
+        return view('presenca.historico', compact('crianca', 'presencas', 'mes', 'ano', 'diasUteis', 'diasPresente', 'percentualPresenca'));
     }
 
     /**
@@ -299,17 +322,19 @@ class PresencaController extends Controller
 
         // Calcular estatísticas para cada criança
         foreach ($criancas as $crianca) {
-            $diasPresente = $crianca->presencas->groupBy(function ($item) {
-                return $item->data->format('Y-m-d');
-            })->filter(function ($grupo) {
-                return $grupo->where('tipo', 'entrada')->count() > 0;
-            })->count();
+            $diasPresente = $crianca->presencas
+                ->groupBy(function ($item) {
+                    return $item->data->format('Y-m-d');
+                })
+                ->filter(function ($grupo) {
+                    return $grupo->first() && $grupo->first()->hora_entrada;
+                })->count();
 
             $crianca->dias_presente = $diasPresente;
             $crianca->percentual_presenca = $diasUteis > 0 ? round(($diasPresente / $diasUteis) * 100, 1) : 0;
         }
 
-        return view('presencas.relatorio', compact('criancas', 'turmas', 'mes', 'ano', 'turmaId', 'diasUteis'));
+        return view('presenca.relatorio', compact('criancas', 'turmas', 'mes', 'ano', 'turmaId', 'diasUteis'));
     }
 
     /**
@@ -329,5 +354,106 @@ class PresencaController extends Controller
         }
 
         return $diasUteis;
+    }
+
+    /**
+     * Processa o registro de entrada via AJAX
+     */
+    public function processarEntrada(Request $request, Crianca $crianca)
+    {
+        try {
+            $validated = $request->validate([
+                'responsavel_entrada_id' => 'required|exists:responsaveis,id',
+                'observacao' => 'nullable|string',
+            ]);
+
+            // Verificar se já existe um registro para hoje
+            $presenca = Presenca::firstOrNew([
+                'crianca_id' => $crianca->id,
+                'data' => today(),
+            ]);
+
+            if ($presenca->hora_entrada) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Entrada já registrada para esta criança hoje.'
+                ]);
+            }
+
+            // Registrar entrada
+            $presenca->hora_entrada = now()->format('H:i:s');
+            $presenca->responsavel_entrada_id = $validated['responsavel_entrada_id'];
+            $presenca->observacoes = $validated['observacao'] ?? null;
+            $presenca->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Entrada registrada com sucesso!'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erro ao registrar entrada: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao registrar entrada: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Processa o registro de saída via AJAX
+     */
+    public function processarSaida(Request $request, Crianca $crianca)
+    {
+        try {
+            $validated = $request->validate([
+                'responsavel_saida_id' => 'required|exists:responsaveis,id',
+                'observacao' => 'nullable|string',
+            ]);
+
+            // Buscar o registro de entrada de hoje
+            $presenca = Presenca::where('crianca_id', $crianca->id)
+                ->whereDate('data', today())
+                ->whereNotNull('hora_entrada')
+                ->first();
+
+            if (!$presenca) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Não há registro de entrada para hoje.'
+                ]);
+            }
+
+            if ($presenca->hora_saida) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Saída já registrada para esta criança hoje.'
+                ]);
+            }
+
+            // Registrar saída
+            $presenca->hora_saida = now()->format('H:i:s');
+            $presenca->responsavel_saida_id = $validated['responsavel_saida_id'];
+
+            // Se houver uma nova observação, anexá-la às observações existentes
+            if (!empty($validated['observacao'])) {
+                $observacoes = $presenca->observacoes ? $presenca->observacoes . "\n\nSaída: " : "Saída: ";
+                $presenca->observacoes = $observacoes . $validated['observacao'];
+            }
+
+            $presenca->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Saída registrada com sucesso!'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erro ao registrar saída: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao registrar saída: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

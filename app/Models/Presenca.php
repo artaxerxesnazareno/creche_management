@@ -15,10 +15,11 @@ class Presenca extends Model
     protected $fillable = [
         'crianca_id',
         'data',
-        'tipo',
-        'hora',
-        'observacao',
-        'responsavel',
+        'hora_entrada',
+        'hora_saida',
+        'responsavel_entrada_id',
+        'responsavel_saida_id',
+        'observacoes',
     ];
 
     protected $casts = [
@@ -34,6 +35,22 @@ class Presenca extends Model
     }
 
     /**
+     * Relação com o responsável pela entrada
+     */
+    public function responsavelEntrada()
+    {
+        return $this->belongsTo(Responsavel::class, 'responsavel_entrada_id');
+    }
+
+    /**
+     * Relação com o responsável pela saída
+     */
+    public function responsavelSaida()
+    {
+        return $this->belongsTo(Responsavel::class, 'responsavel_saida_id');
+    }
+
+    /**
      * Formata a data para exibição
      */
     public function getDataFormatadaAttribute()
@@ -44,42 +61,16 @@ class Presenca extends Model
     /**
      * Formata a hora para exibição
      */
-    public function getHoraFormatadaAttribute()
+    public function getHoraEntradaFormatadaAttribute()
     {
-        return $this->hora ? Carbon::createFromFormat('H:i:s', $this->hora)->format('H:i') : '';
+        return $this->hora_entrada ? Carbon::createFromFormat('H:i:s', $this->hora_entrada)->format('H:i') : '';
     }
 
     /**
-     * Retorna o status da presença
+     * Formata a hora para exibição
      */
-    public function getStatusAttribute()
+    public function getHoraSaidaFormatadaAttribute()
     {
-        switch ($this->tipo) {
-            case 'entrada':
-                return 'Presente';
-            case 'saida':
-                return 'Saída';
-            case 'falta':
-                return 'Ausente';
-            default:
-                return 'Desconhecido';
-        }
-    }
-
-    /**
-     * Retorna a classe CSS para o status
-     */
-    public function getStatusClassAttribute()
-    {
-        switch ($this->tipo) {
-            case 'entrada':
-                return 'bg-green-100 text-green-800';
-            case 'saida':
-                return 'bg-blue-100 text-blue-800';
-            case 'falta':
-                return 'bg-red-100 text-red-800';
-            default:
-                return 'bg-gray-100 text-gray-800';
-        }
+        return $this->hora_saida ? Carbon::createFromFormat('H:i:s', $this->hora_saida)->format('H:i') : '';
     }
 }

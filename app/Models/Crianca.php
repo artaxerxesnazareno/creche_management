@@ -104,6 +104,24 @@ class Crianca extends Model
         return $this->belongsTo(Responsavel::class, 'responsavel_secundario_id');
     }
 
+    /**
+     * Retorna todos os responsáveis associados à criança (principal e secundário)
+     */
+    public function responsaveis()
+    {
+        $responsaveisList = collect();
+
+        if ($this->responsavelPrincipal) {
+            $responsaveisList->push($this->responsavelPrincipal);
+        }
+
+        if ($this->responsavelSecundario) {
+            $responsaveisList->push($this->responsavelSecundario);
+        }
+
+        return $responsaveisList;
+    }
+
     public function turma()
     {
         return $this->belongsTo(Turma::class);
@@ -117,6 +135,11 @@ class Crianca extends Model
     public function presencas()
     {
         return $this->hasMany(Presenca::class);
+    }
+
+    public function matriculas()
+    {
+        return $this->hasMany(Matricula::class);
     }
 
     /**

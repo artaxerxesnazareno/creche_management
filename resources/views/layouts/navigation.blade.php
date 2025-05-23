@@ -27,7 +27,7 @@
                     <x-nav-link :href="route('matriculas.index')" :active="request()->routeIs('matriculas.*')">
                         {{ __('Matrículas') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('presencas.index')" :active="request()->routeIs('presencas.*')">
+                    <x-nav-link :href="route('presenca.index')" :active="request()->routeIs('presenca.*')">
                         {{ __('Presenças') }}
                     </x-nav-link>
                     <x-nav-link :href="route('relatorios.index')" :active="request()->routeIs('relatorios.*')">
@@ -106,7 +106,7 @@
             <x-responsive-nav-link :href="route('matriculas.index')" :active="request()->routeIs('matriculas.*')">
                 {{ __('Matrículas') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('presencas.index')" :active="request()->routeIs('presencas.*')">
+            <x-responsive-nav-link :href="route('presenca.index')" :active="request()->routeIs('presenca.*')">
                 {{ __('Presenças') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('relatorios.index')" :active="request()->routeIs('relatorios.*')">

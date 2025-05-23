@@ -59,15 +59,19 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/documentos/{documento}', [DocumentoController::class, 'destroy'])->name('documentos.destroy');
 
     // Rotas de presenças
-    Route::get('/presencas', [PresencaController::class, 'index'])->name('presencas.index');
-    Route::get('/presencas/criar', [PresencaController::class, 'create'])->name('presencas.create');
-    Route::post('/presencas', [PresencaController::class, 'store'])->name('presencas.store');
-    Route::get('/presencas/{crianca}/historico', [PresencaController::class, 'historico'])->name('presencas.historico');
-    Route::get('/presencas/relatorio', [PresencaController::class, 'relatorio'])->name('presencas.relatorio');
-    Route::get('/criancas/{crianca}/registrar-entrada', [PresencaController::class, 'registrarEntrada'])->name('presencas.registrar-entrada');
-    Route::post('/criancas/{crianca}/registrar-entrada', [PresencaController::class, 'salvarEntrada'])->name('presencas.salvar-entrada');
-    Route::get('/criancas/{crianca}/registrar-saida', [PresencaController::class, 'registrarSaida'])->name('presencas.registrar-saida');
-    Route::post('/criancas/{crianca}/registrar-saida', [PresencaController::class, 'salvarSaida'])->name('presencas.salvar-saida');
+    Route::get('/presencas', [PresencaController::class, 'index'])->name('presenca.index');
+    Route::get('/presencas/criar', [PresencaController::class, 'create'])->name('presenca.create');
+    Route::post('/presencas', [PresencaController::class, 'store'])->name('presenca.store');
+    Route::get('/presencas/{crianca}/historico', [PresencaController::class, 'historico'])->name('presenca.historico');
+    Route::get('/presencas/relatorio', [PresencaController::class, 'relatorio'])->name('presenca.relatorio');
+    Route::get('/criancas/{crianca}/registrar-entrada', [PresencaController::class, 'registrarEntrada'])->name('presenca.registrar-entrada');
+    Route::post('/criancas/{crianca}/registrar-entrada', [PresencaController::class, 'salvarEntrada'])->name('presenca.salvar-entrada');
+    Route::get('/criancas/{crianca}/registrar-saida', [PresencaController::class, 'registrarSaida'])->name('presenca.registrar-saida');
+    Route::post('/criancas/{crianca}/registrar-saida', [PresencaController::class, 'salvarSaida'])->name('presenca.salvar-saida');
+
+    // Novas rotas AJAX para registro de entrada e saída via modal
+    Route::post('/presenca/{crianca}/entrada', [PresencaController::class, 'processarEntrada'])->name('presenca.ajax.entrada');
+    Route::post('/presenca/{crianca}/saida', [PresencaController::class, 'processarSaida'])->name('presenca.ajax.saida');
 
     // Rotas de Responsáveis (modificadas para corrigir o erro de parâmetro)
 Route::get('/responsaveis', [ResponsavelController::class, 'index'])->name('responsaveis.index');
@@ -87,21 +91,19 @@ Route::resource('matriculas', MatriculaController::class);
 // Rotas para turmas
 Route::resource('turmas', TurmaController::class);
 
-// Rotas para presenças
-Route::get('/presencas', [PresencaController::class, 'index'])->name('presencas.index');
-Route::get('/presencas/criar', [PresencaController::class, 'create'])->name('presencas.create');
-Route::post('/presencas', [PresencaController::class, 'store'])->name('presencas.store');
-Route::get('/presencas/{crianca}/historico', [PresencaController::class, 'historico'])->name('presencas.historico');
-Route::get('/presencas/relatorio', [PresencaController::class, 'relatorio'])->name('presencas.relatorio');
-
 // Rotas para relatórios
 Route::get('/relatorios', [RelatorioController::class, 'index'])->name('relatorios.index');
+Route::get('/relatorios/criancas', [RelatorioController::class, 'criancas'])->name('relatorios.criancas');
+Route::get('/relatorios/criancas/exportar', [RelatorioController::class, 'exportarCriancas'])->name('relatorios.criancas.exportar');
 Route::get('/relatorios/financeiro', [RelatorioController::class, 'financeiro'])->name('relatorios.financeiro');
+Route::get('/relatorios/pagamentos', [RelatorioController::class, 'pagamentos'])->name('relatorios.pagamentos');
 Route::get('/relatorios/presenca', [RelatorioController::class, 'presenca'])->name('relatorios.presenca');
+Route::get('/relatorios/frequencia', [RelatorioController::class, 'frequencia'])->name('relatorios.frequencia');
 Route::get('/relatorios/matriculas', [RelatorioController::class, 'matriculas'])->name('relatorios.matriculas');
+Route::get('/relatorios/responsaveis', [RelatorioController::class, 'responsaveis'])->name('relatorios.responsaveis');
 Route::get('/relatorios/turmas', [RelatorioController::class, 'turmas'])->name('relatorios.turmas');
 Route::post('/relatorios/gerar', [RelatorioController::class, 'gerar'])->name('relatorios.gerar');
-Route::get('/relatorios/exportar/{tipo}', [RelatorioController::class, 'exportar'])->name('relatorios.exportar');
+Route::get('/relatorios/exportar', [RelatorioController::class, 'exportarDados'])->name('relatorios.exportar');
 
     // Rotas do Sistema de Creche
     Route::prefix('admin')->middleware(['auth'])->group(function () {});
