@@ -11,7 +11,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-blue-500 bg-opacity-10">
+                        <div class="p-3">
                             <i class="fas fa-child text-blue-500 text-2xl"></i>
                         </div>
                         <div class="ml-4">
@@ -25,7 +25,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-green-500 bg-opacity-10">
+                        <div class="p-3">
                             <i class="fas fa-users text-green-500 text-2xl"></i>
                         </div>
                         <div class="ml-4">
@@ -39,7 +39,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-purple-500 bg-opacity-10">
+                        <div class="p-3">
                             <i class="fas fa-clipboard-list text-purple-500 text-2xl"></i>
                         </div>
                         <div class="ml-4">
@@ -53,7 +53,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-yellow-500 bg-opacity-10">
+                        <div class="p-3">
                             <i class="fas fa-clock text-yellow-500 text-2xl"></i>
                         </div>
                         <div class="ml-4">
@@ -84,18 +84,18 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
                                             <div class="flex-shrink-0 h-10 w-10">
-                                                <img class="h-10 w-10 rounded-full" src="{{ $crianca->foto_url ?? '/img/placeholder.png' }}" alt="{{ $crianca->nome }}">
+                                                <img class="h-10 w-10 rounded-full" src="{{ $crianca['foto_url'] }}" alt="{{ $crianca['nome'] }}">
                                             </div>
                                             <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">{{ $crianca->nome }}</div>
+                                                <div class="text-sm font-medium text-gray-900">{{ $crianca['nome'] }}</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">{{ $crianca->idade_formatada ?? 'N/A' }}</div>
+                                        <div class="text-sm text-gray-900">{{ $crianca['idade_formatada'] }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">{{ $crianca->turma ?? 'N/A' }}</div>
+                                        <div class="text-sm text-gray-900">{{ $crianca['turma'] }}</div>
                                     </td>
                                 </tr>
                                 @empty
@@ -123,8 +123,8 @@
                                 </div>
                             </div>
                             <div class="ml-4">
-                                <div class="text-sm font-medium text-gray-900">{{ $atividade->descricao }}</div>
-                                <div class="text-sm text-gray-500">{{ $atividade->data_formatada }}</div>
+                                <div class="text-sm font-medium text-gray-900">{{ $atividade['descricao'] }}</div>
+                                <div class="text-sm text-gray-500">{{ $atividade['data_formatada'] }}</div>
                             </div>
                         </div>
                         @empty

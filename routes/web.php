@@ -10,6 +10,7 @@ use App\Http\Controllers\ResponsavelController;
 use App\Http\Controllers\MatriculaController;
 use App\Http\Controllers\TurmaController;
 use App\Http\Controllers\RelatorioController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,10 +26,8 @@ Auth::routes();
 
 // Rotas Protegidas
 Route::middleware(['auth'])->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/', function () {
-        return view('dashboard');
-    })->name('dashboard');
     // Rota temporária para criar turmas de teste
     Route::get('/criar-turmas-teste', function () {
         // Criar algumas turmas básicas se não existirem
