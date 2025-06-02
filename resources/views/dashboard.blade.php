@@ -84,18 +84,24 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
                                             <div class="flex-shrink-0 h-10 w-10">
-                                                <img class="h-10 w-10 rounded-full" src="{{ $crianca['foto_url'] }}" alt="{{ $crianca['nome'] }}">
+                                                @if($crianca->foto)
+                                                    <img src="{{ Storage::url($crianca->foto) }}" alt="{{ $crianca->nome }}" class="h-10 w-10 rounded-full object-cover">
+                                                @else
+                                                    <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+                                                        <span class="text-gray-500 text-xs">Sem foto</span>
+                                                    </div>
+                                                @endif
                                             </div>
                                             <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">{{ $crianca['nome'] }}</div>
+                                                <div class="text-sm font-medium text-gray-900">{{ $crianca->nome ?? 'N/A' }}</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">{{ $crianca['idade_formatada'] }}</div>
+                                        <div class="text-sm text-gray-900">{{ $crianca->idade_formatada ?? 'N/A' }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">{{ $crianca['turma'] }}</div>
+                                        <div class="text-sm text-gray-900">{{ $crianca->turma->nome ?? 'N/A' }}</div>
                                     </td>
                                 </tr>
                                 @empty

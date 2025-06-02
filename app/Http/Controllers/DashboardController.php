@@ -8,6 +8,7 @@ use App\Models\Matricula;
 use App\Models\Presenca;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class DashboardController extends Controller
 {
@@ -29,15 +30,7 @@ class DashboardController extends Controller
         $criancasRecentes = Crianca::with('turma')
             ->latest()
             ->take(5)
-            ->get()
-            ->map(function ($crianca) {
-                return [
-                    'nome' => $crianca->nome ?? 'N/A',
-                    'foto_url' => $crianca->foto_url ?? '/img/placeholder.png',
-                    'idade_formatada' => $crianca->idade_formatada ?? 'N/A',
-                    'turma' => $crianca->turma ? $crianca->turma->nome : 'N/A'
-                ];
-            });
+            ->get();
 
         // Atividades recentes (últimas 5)
         $atividades = Presenca::with(['crianca.turma'])
